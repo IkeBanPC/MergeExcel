@@ -78,7 +78,8 @@ class ViewController: NSViewController {
         
         if let path = primaryPath, let contentPath = contentPath {
             self.progressView.isHidden = false
-            self.progressView.doubleValue = 0
+            self.progressView.minValue = 2
+            self.progressView.doubleValue = 2
             mergeButton.isEnabled = false
             contentSheet = BRAOfficeDocumentPackage.open(contentPath)?.workbook.worksheets.first as? BRAWorksheet
             processExcel(path: path)
@@ -96,7 +97,7 @@ class ViewController: NSViewController {
         if let currentSheet = allSheet?.workbook.worksheets.first as? BRAWorksheet {
             let cellRowsCount = currentSheet.rows.count
             let cellColumnsCount = (currentSheet.rows.firstObject as? BRARow)?.cells.count ?? 5
-            
+            self.progressView.minValue = 2
             self.progressView.maxValue = Double(cellRowsCount)
             performOnGlobal {
                 for i in 2 ..< cellRowsCount+1 {
@@ -104,18 +105,22 @@ class ViewController: NSViewController {
                     let enValue = currentSheet.cell(forCellReference: enValueIndex)?.stringValue()
                     let chValueIndex = "D\(i)"
                     let chValue = currentSheet.cell(forCellReference: chValueIndex)?.stringValue()
-                    let values = self.match(en: enValue, ch: chValue, expectResultsCount: cellColumnsCount-4)
-                    for (key,value) in values {
-                        for j in 5 ..< cellColumnsCount+1 {
-                        
-                            if let letterIndex = j.numberToABC() {
-                                let index = "\(letterIndex)1"
-                                if key == currentSheet.cell(forCellReference: index)?.stringValue() {
-                                    let valueIndex = "\(letterIndex)\(i)"
-                                    _ = lock.wait(timeout: .distantFuture)
-                                    currentSheet.cell(forCellReference: valueIndex, shouldCreate: true)?.setStringValue(value)
-                                   
-                                    lock.signal()
+                    if let en = enValue, let ch = chValue {
+                        let values = self.match(en: en, ch: ch)
+                        for (key,value) in values {
+                            for j in 5 ..< cellColumnsCount+1 {
+                                if let letterIndex = j.numberToABC() {
+                                    let index = "\(letterIndex)1"
+                                    if key == currentSheet.cell(forCellReference: index)?.stringValue() {
+                                        let valueIndex = "\(letterIndex)\(i)"
+                                        _ = lock.wait(timeout: .distantFuture)
+                                        if value != "" {
+                                            currentSheet.cell(forCellReference: valueIndex, shouldCreate: true)?.setStringValue(value)
+                                        } else {
+                                            currentSheet.cell(forCellReference: valueIndex, shouldCreate: true)?.setCellFillWithForegroundColor(NSColor.red, backgroundColor: NSColor.red, andPatternType: kBRACellFillPatternTypeDarkTrellis)
+                                        }
+                                        lock.signal()
+                                    }
                                 }
                             }
                         }
@@ -160,19 +165,40 @@ class ViewController: NSViewController {
         }
     }
     
-    private func match(en:String?, ch:String?, expectResultsCount: Int) -> [String: String] {
+    private func match(en:String, ch:String) -> [String: String] {
         var result = [String:String]()
         if let contentCurrentSheet = self.contentSheet {
             for row in contentCurrentSheet.rows {
                 if let row = row as? BRARow {
-                    let enValue = (row.cells[0] as? BRACell)?.stringValue()
-                    let chValue = (row.cells[1] as? BRACell)?.stringValue()
-                    if enValue == en || chValue == ch {
-                        for i in 2 ..< row.cells.count {
+                    if let enValue = (row.cells[0] as? BRACell)?.stringValue(),
+                        let chValue = (row.cells[1] as? BRACell)?.stringValue() {
+                        if enValue == en {
+                            self.updateResult(row: row, sheet: contentCurrentSheet, result: &result)
+                            break
+                        }
+                        if chValue == ch {
+                            self.updateResult(row: row, sheet: contentCurrentSheet, result: &result)
+                            break
+                        }
+                        if en.blurryEnMatch(with: enValue) {
+                            self.updateResult(row: row, sheet: contentCurrentSheet, result: &result)
+                            break
+                        }
+                        if ch.blurryCHMatch(with: chValue) {
+                            self.updateResult(row: row, sheet: contentCurrentSheet, result: &result)
+                            break
+                        }
+                    }
+                }
+            }
+            if result.count == 0 {
+                if let firsrRowCount = (contentCurrentSheet.rows.firstObject as? BRARow)?.cells.count {
+                    if firsrRowCount > 2 {
+                        for i in 2 ..< firsrRowCount {
                             if let letterIndex = (i+1).numberToABC() {
                                 let index = "\(letterIndex)1"
                                 if let key = contentCurrentSheet.cell(forCellReference: index)?.stringValue() {
-                                    result[key] = (row.cells[i] as? BRACell)?.stringValue() ?? ""
+                                    result[key] = ""
                                 }
                             }
                         }
@@ -181,6 +207,17 @@ class ViewController: NSViewController {
             }
         }
         return result
+    }
+    
+    private func updateResult(row: BRARow, sheet: BRAWorksheet, result: inout [String: String]) {
+        for i in 2 ..< row.cells.count {
+            if let letterIndex = (i+1).numberToABC() {
+                let index = "\(letterIndex)1"
+                if let key = sheet.cell(forCellReference: index)?.stringValue() {
+                    result[key] = (row.cells[i] as? BRACell)?.stringValue() ?? ""
+                }
+            }
+        }
     }
 }
 

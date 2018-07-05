@@ -39,6 +39,56 @@ public extension String {
         }
         return finalValue
     }
+    fileprivate  func filtENAfter() -> String {
+        var value = self.filter { (c) -> Bool in
+            if let value = c.unicodeScalars.first?.value {
+                switch value {
+                case 65 ..< 91:
+                    return true
+                case 97 ..< 123:
+                    return true
+                default:
+                    return false
+                }
+            }
+            return false
+        }
+        value = value.lowercased()
+        return value
+    }
+    
+    fileprivate func filtChAfter() -> String {
+        var value = self
+        let unsafeSlices = ["\\n","\\t","\\r"]
+        for slice in unsafeSlices {
+            if value.contains(slice) {
+                value = value.components(separatedBy: slice).reduce("", {$0 + $1})
+            }
+        }
+        let ignoreC = [",","，","。",".","!","！","?","？","、","\n","\t","\r","\\"," "]
+        value = value.filter { (c) -> Bool in
+            if ignoreC.contains("\(c)") {
+                return false
+            }
+            return true
+        }
+        value = value.lowercased()
+        return value
+    }
+    public func blurryEnMatch(with content: String) -> Bool {
+        if self.filtENAfter() == content.filtENAfter() {
+            return true
+        } else {
+            return false
+        }
+    }
+    public func blurryCHMatch(with content: String) -> Bool {
+        if self.filtChAfter() == content.filtChAfter() {
+            return true
+        }
+        return false
+    }
+    
 }
 
 public extension Int {
