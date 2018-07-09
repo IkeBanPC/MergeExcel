@@ -8,21 +8,36 @@
 
 import Foundation
 
+
+/// Define a common handle block.
 typealias Handle = () -> ()
 
+
+/// Execute Task On Main Thread.
+///
+/// - Parameter handle: Task to execute.
 func performOnMain(handle: @escaping Handle) {
     DispatchQueue.main.async {
         handle()
     }
 }
 
+
+/// Execute Task On Global Thread.
+///
+/// - Parameter handle: Task to execute.
 func performOnGlobal(handle: @escaping Handle) {
     DispatchQueue.global().async {
         handle()
     }
 }
 
+
 public extension String {
+    
+    /// ABC to 123
+    ///
+    /// - Returns: Int value
     public func ABCtoNumber() -> Int? {
         let character = self.uppercased()
         var finalValue: Int?
@@ -39,6 +54,10 @@ public extension String {
         }
         return finalValue
     }
+    
+    /// Filt String and only latin letters left.
+    ///
+    /// - Returns: filtered string
     fileprivate  func filtENAfter() -> String {
         var value = self.filter { (c) -> Bool in
             if let value = c.unicodeScalars.first?.value {
@@ -57,8 +76,13 @@ public extension String {
         return value
     }
     
+    
+    /// Filt Chinese String and remove symbols.
+    ///
+    /// - Returns: filtered string
     fileprivate func filtChAfter() -> String {
         var value = self
+        // While some xlsx file content contains "\n" but XlsxReaderWriter regard it as "\\" plus "n", it's a rough solution for the confusing problem.
         let unsafeSlices = ["\\n","\\t","\\r"]
         for slice in unsafeSlices {
             if value.contains(slice) {
@@ -75,6 +99,12 @@ public extension String {
         value = value.lowercased()
         return value
     }
+    
+    
+    /// Blurry match English Translations
+    ///
+    /// - Parameter content: content to match with
+    /// - Returns: match result
     public func blurryEnMatch(with content: String) -> Bool {
         if self.filtENAfter() == content.filtENAfter() {
             return true
@@ -82,6 +112,11 @@ public extension String {
             return false
         }
     }
+    
+    /// Blurry match Chinese Translations
+    ///
+    /// - Parameter content: content to match with
+    /// - Returns: match result
     public func blurryCHMatch(with content: String) -> Bool {
         if self.filtChAfter() == content.filtChAfter() {
             return true
@@ -92,6 +127,10 @@ public extension String {
 }
 
 public extension Int {
+    
+    /// 123 To ABC
+    ///
+    /// - Returns: string value
     public func numberToABC() -> String? {
         switch self {
         case 1 ..< 27:

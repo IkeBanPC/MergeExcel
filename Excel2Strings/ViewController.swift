@@ -14,14 +14,11 @@ class ViewController: NSViewController {
     @IBOutlet weak var primaryView: NSView!
     @IBOutlet weak var contentView: NSView!
     @IBOutlet weak var mergeButton: NSButton!
-    @IBOutlet weak var primaryButton: NSButton!
-    @IBOutlet weak var contentButton: NSButton!
     @IBOutlet weak var primaryLabel: NSTextField!
     @IBOutlet weak var contentLabel: NSTextField!
     @IBOutlet weak var progressView: NSProgressIndicator!
     @IBOutlet weak var waitingView: NSProgressIndicator!
     
-
     var primaryPath: String?
     var contentPath: String?
     var contentSheet: BRAWorksheet?
@@ -42,7 +39,7 @@ class ViewController: NSViewController {
     
     @IBAction func primaryButtonClicked(_ sender: NSButton) {
         let openPanel = NSOpenPanel()
-        openPanel.prompt = "打开初始xlsx文件"
+        openPanel.prompt = "Select .xlsx File"
         openPanel.allowedFileTypes = ["xlsx"]
         performOnMain {
             openPanel.beginSheetModal(for: self.view.window!) { (response) in
@@ -59,7 +56,7 @@ class ViewController: NSViewController {
     
     @IBAction func contentButtonClicked(_ sender: NSButton) {
         let openPanel = NSOpenPanel()
-        openPanel.prompt = "打开内容xlsx文件"
+        openPanel.prompt = "Select .xlsx File"
         openPanel.allowedFileTypes = ["xlsx"]
         performOnMain {
             openPanel.beginSheetModal(for: self.view.window!) { (response) in
@@ -85,12 +82,16 @@ class ViewController: NSViewController {
             processExcel(path: path)
         } else {
             let alert = NSAlert()
-            alert.messageText = "必须选择两份xlsx文件"
+            alert.messageText = "Two .xlsx Files Are Required!"
             alert.alertStyle = NSAlert.Style.critical
             alert.beginSheetModal(for: self.view.window!) { _ in}
         }
     }
     
+    
+    /// Merge Process
+    ///
+    /// - Parameter path: Primary xlsx File Path
     private func processExcel(path: String) {
         let allSheet = BRAOfficeDocumentPackage.open(path)
         let lock = DispatchSemaphore(value: 1)
@@ -165,6 +166,13 @@ class ViewController: NSViewController {
         }
     }
     
+    
+    /// Match Content in Content xlsx File
+    ///
+    /// - Parameters:
+    ///   - en: English content
+    ///   - ch: Chinese content
+    /// - Returns: result dictionary
     private func match(en:String, ch:String) -> [String: String] {
         var result = [String:String]()
         if let contentCurrentSheet = self.contentSheet {
@@ -209,6 +217,13 @@ class ViewController: NSViewController {
         return result
     }
     
+    
+    /// Update Primary xlsx File Content.
+    ///
+    /// - Parameters:
+    ///   - row: row to update
+    ///   - sheet: sheet to update
+    ///   - result: result dictionary
     private func updateResult(row: BRARow, sheet: BRAWorksheet, result: inout [String: String]) {
         for i in 2 ..< row.cells.count {
             if let letterIndex = (i+1).numberToABC() {
