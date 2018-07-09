@@ -48,7 +48,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		6A53D1A620EC6AB900A23F42 /* Excel2Strings.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Excel2Strings.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A53D1A620EC6AB900A23F42 /* MergeExcel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MergeExcel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A53D1A920EC6AB900A23F42 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6A53D1AB20EC6AB900A23F42 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		6A53D1AD20EC6ABB00A23F42 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -87,7 +87,7 @@
 		6A53D1A720EC6AB900A23F42 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6A53D1A620EC6AB900A23F42 /* Excel2Strings.app */,
+				6A53D1A620EC6AB900A23F42 /* MergeExcel.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -136,9 +136,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		6A53D1A520EC6AB900A23F42 /* Excel2Strings */ = {
+		6A53D1A520EC6AB900A23F42 /* MergeExcel */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6A53D1B620EC6ABB00A23F42 /* Build configuration list for PBXNativeTarget "Excel2Strings" */;
+			buildConfigurationList = 6A53D1B620EC6ABB00A23F42 /* Build configuration list for PBXNativeTarget "MergeExcel" */;
 			buildPhases = (
 				6A53D1A220EC6AB900A23F42 /* Sources */,
 				6A53D1A320EC6AB900A23F42 /* Frameworks */,
@@ -149,9 +149,9 @@
 			dependencies = (
 				6AD4CC9720EC9CE400CAD8F9 /* PBXTargetDependency */,
 			);
-			name = Excel2Strings;
+			name = MergeExcel;
 			productName = Excel2Strings;
-			productReference = 6A53D1A620EC6AB900A23F42 /* Excel2Strings.app */;
+			productReference = 6A53D1A620EC6AB900A23F42 /* MergeExcel.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -175,7 +175,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 6A53D1A120EC6AB900A23F42 /* Build configuration list for PBXProject "Excel2Strings" */;
+			buildConfigurationList = 6A53D1A120EC6AB900A23F42 /* Build configuration list for PBXProject "MergeExcel" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -194,7 +194,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				6A53D1A520EC6AB900A23F42 /* Excel2Strings */,
+				6A53D1A520EC6AB900A23F42 /* MergeExcel */,
 			);
 		};
 /* End PBXProject section */
@@ -431,7 +431,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		6A53D1A120EC6AB900A23F42 /* Build configuration list for PBXProject "Excel2Strings" */ = {
+		6A53D1A120EC6AB900A23F42 /* Build configuration list for PBXProject "MergeExcel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6A53D1B420EC6ABB00A23F42 /* Debug */,
@@ -440,7 +440,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6A53D1B620EC6ABB00A23F42 /* Build configuration list for PBXNativeTarget "Excel2Strings" */ = {
+		6A53D1B620EC6ABB00A23F42 /* Build configuration list for PBXNativeTarget "MergeExcel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6A53D1B720EC6ABB00A23F42 /* Debug */,

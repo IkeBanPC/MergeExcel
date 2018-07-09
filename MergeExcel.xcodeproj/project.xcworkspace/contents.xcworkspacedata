@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:Excel2Strings.xcodeproj">
+      location = "self:/Users/isaac/Desktop/Projects/MergeExcel/MergeExcel.xcodeproj">
    </FileRef>
 </Workspace>
