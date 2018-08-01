@@ -26,11 +26,6 @@ class ViewController: NSViewController {
         super.viewDidLoad()
         setUI()
     }
-    override var representedObject: Any? {
-        didSet {
-
-        }
-    }
     
     private func setUI() {
         progressView.isHidden = true
@@ -42,8 +37,9 @@ class ViewController: NSViewController {
         openPanel.prompt = "Select .xlsx File"
         openPanel.allowedFileTypes = ["xlsx"]
         performOnMain {
-            openPanel.beginSheetModal(for: self.view.window!) { (response) in
-                if response.rawValue == 1 {
+            openPanel.beginSheetModal(for: self.view.window!) {
+                [unowned self] (response) in
+                if response == .OK {
                     if let url = openPanel.url {
                         let fileName = url.lastPathComponent
                         self.primaryLabel.stringValue = fileName
@@ -59,8 +55,9 @@ class ViewController: NSViewController {
         openPanel.prompt = "Select .xlsx File"
         openPanel.allowedFileTypes = ["xlsx"]
         performOnMain {
-            openPanel.beginSheetModal(for: self.view.window!) { (response) in
-                if response.rawValue == 1 {
+            openPanel.beginSheetModal(for: self.view.window!) {
+                [unowned self] (response) in
+                if response == .OK {
                     if let url = openPanel.url {
                         let fileName = url.lastPathComponent
                         self.contentLabel.stringValue = fileName
@@ -81,10 +78,7 @@ class ViewController: NSViewController {
             contentSheet = BRAOfficeDocumentPackage.open(contentPath)?.workbook.worksheets.first as? BRAWorksheet
             processExcel(path: path)
         } else {
-            let alert = NSAlert()
-            alert.messageText = "Two .xlsx Files Are Required!"
-            alert.alertStyle = NSAlert.Style.critical
-            alert.beginSheetModal(for: self.view.window!) { _ in}
+            showAlert("Two .xlsx Files Are Required!")
         }
     }
     
@@ -147,17 +141,21 @@ class ViewController: NSViewController {
                         savePanel.allowedFileTypes = ["xlsx"]
                         savePanel.canCreateDirectories = true
                         savePanel.isExtensionHidden = true
-                        savePanel.beginSheetModal(for: self.view.window!, completionHandler: { (response) in
+                        savePanel.beginSheetModal(for: self.view.window!, completionHandler: {
+                            [unowned self] (response) in
                             if response == .OK {
-                                if let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
-                                    let url = savePanel.url {
-                                    print(url)
-                                    try? data.write(to: url)
+                                do {
+                                    let data = try Data(contentsOf: URL(fileURLWithPath: path))
+                                    if let url = savePanel.url {
+                                        print(url)
+                                        try data.write(to: url)
+                                    }
                                     self.waitingView.stopAnimation(self)
+                                } catch let error {
+                                    self.showAlert(error.localizedDescription)
                                 }
-                            } else {
-                                self.waitingView.stopAnimation(self)
                             }
+                            self.waitingView.stopAnimation(self)
                             self.mergeButton.isEnabled = true
                         })
                     }
@@ -233,6 +231,17 @@ class ViewController: NSViewController {
                 }
             }
         }
+    }
+    
+    
+    /// Show an alert with content.
+    ///
+    /// - Parameter content: content text to show
+    private func showAlert(_ content: String) {
+        let alert = NSAlert()
+        alert.messageText = content
+        alert.alertStyle = NSAlert.Style.critical
+        alert.beginSheetModal(for: self.view.window!) { _ in}
     }
 }
 
